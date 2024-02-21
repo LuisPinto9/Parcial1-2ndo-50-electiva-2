@@ -10,7 +10,6 @@ import uptc.edu.co.luispinto.repositories.ProductRepository;
 import uptc.edu.co.luispinto.repositories.SaleRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SaleService {
@@ -31,20 +30,39 @@ public class SaleService {
     }
 
     public Sale save(Sale sale, Customer customer) {
-        sale.setCustomer(customer);
-        return saleRepository.save(sale);
+        if (validate(sale.getProducts())) {
+            sale.setCustomer(customer);
+            updateProduct(sale.getProducts());
+            return saleRepository.save(sale);
+        } else {
+            return null;
+        }
     }
 
-    public boolean validate(List<Product> products){
+    public boolean validate(List<Product> products) {
+        for (Product product : products) {
+            if (product.getStock() == 0){
+                return false;
+            } else {
+                Product storedProduct = productService.findById(product.getIdProduct());
+                if (storedProduct != null && product.getStock() > storedProduct.getStock()) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
-    public Product updateProduct(Integer id, Product product) {
-        Product productFound = productService.findById(id);
-        productFound.setName(product.getName());
-        productFound.setStock(product.getStock() - 1);
-        productRepository.save(productFound);
-        return productFound;
+    public void updateProduct(List<Product> products) {
+        for (Product product : products) {
+            Product productFound = productService.findById(product.getIdProduct());
+            if (productFound != null) {
+                int updatedStock = productFound.getStock() - product.getStock();
+                if (updatedStock >= 0) {
+                    productFound.setStock(updatedStock);
+                    productRepository.save(productFound);
+                }
+            }
+        }
     }
-
 }

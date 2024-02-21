@@ -39,7 +39,12 @@ public class SaleController {
             Customer customer = customerService.findById(id);
             if (customer != null) {
                 Sale result = SaleService.save(Sale, customer);
-                return ResponseHandler.generateResponse("Succes", HttpStatus.OK, result);
+                if (result == null){
+                    return ResponseHandler.generateResponse("Succes", HttpStatus.BAD_REQUEST, null);
+
+                }else {
+                    return ResponseHandler.generateResponse("Succes", HttpStatus.OK, result);
+                }
             } else {
                 return ResponseHandler.generateResponse("Succes", HttpStatus.NOT_FOUND, null);
             }

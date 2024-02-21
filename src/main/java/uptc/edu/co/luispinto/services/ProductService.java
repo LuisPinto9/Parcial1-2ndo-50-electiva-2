@@ -24,6 +24,9 @@ public class ProductService {
     }
 
     public Product save (Product product){
+        if (product.getStock() == 0){
+            return null;
+        }
         return productRepository.save(product);
     }
 }

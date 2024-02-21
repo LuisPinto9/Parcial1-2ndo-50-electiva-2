@@ -30,8 +30,12 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody Product Product) {
         try {
-            Product savedCustomer = ProductService.save(Product);
-            return ResponseHandler.generateResponse("Success", HttpStatus.OK, savedCustomer);
+            Product savedProduct = ProductService.save(Product);
+            if (savedProduct == null) {
+                return ResponseHandler.generateResponse("Error", HttpStatus.BAD_REQUEST, savedProduct);
+            } else {
+                return ResponseHandler.generateResponse("Success", HttpStatus.OK, savedProduct);
+            }
         } catch (Exception e) {
             return ResponseHandler.generateResponse("Error", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

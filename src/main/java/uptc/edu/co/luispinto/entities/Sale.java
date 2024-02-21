@@ -30,7 +30,6 @@ public class Sale {
             joinColumns = @JoinColumn(name = "idSale"),
             inverseJoinColumns = @JoinColumn(name = "idProduct")
     )
-    @JsonIgnore
     private List<Product> products;
 
     public Integer getIdSale() {
